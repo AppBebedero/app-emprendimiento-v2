@@ -1,28 +1,42 @@
 {% extends 'base.html' %}
+{% block title %}Configuración del sistema{% endblock %}
+
 {% block content %}
 <div class="card p-4 m-4">
   <h3>Configuración del sistema</h3>
-  <form method="POST" enctype="multipart/form-data">
+  <form action="/configuracion" method="POST" enctype="multipart/form-data">
     <div class="mb-3">
-      <label>Nombre del negocio</label>
-      <input name="NombreNegocio" class="form-control" required
+      <label for="NombreNegocio" class="form-label">Nombre del negocio</label>
+      <input id="NombreNegocio" name="NombreNegocio" class="form-control" required
              value="{{ config.get('NombreNegocio','') }}">
     </div>
     <div class="mb-3">
-      <label>Logo</label>
-      <input type="file" name="LogoArchivo" class="form-control">
+      <label for="LogoArchivo" class="form-label">Logo del negocio</label>
+      <input id="LogoArchivo" type="file" name="LogoArchivo" class="form-control">
+      <div class="mt-2">
+        {% if config.get('LogoURL') %}
+          <img src="{{ config.get('LogoURL') }}" alt="Logo actual" style="max-height:80px;">
+        {% endif %}
+      </div>
     </div>
     <div class="mb-3">
-      <label>Color principal</label>
-      <input type="color" name="ColorPrincipal" class="form-control"
+      <label for="ColorPrincipal" class="form-label">Color principal</label>
+      <input id="ColorPrincipal" type="color" name="ColorPrincipal" class="form-control"
              value="{{ config.get('ColorPrincipal','#0d6efd') }}">
     </div>
     <div class="mb-3">
-      <label>Color de fondo</label>
-      <input type="color" name="ColorFondo" class="form-control"
+      <label for="ColorFondo" class="form-label">Color de fondo</label>
+      <input id="ColorFondo" type="color" name="ColorFondo" class="form-control"
              value="{{ config.get('ColorFondo','#ffffff') }}">
     </div>
-    <button class="btn btn-success">Guardar</button>
+    <div class="d-flex justify-content-between">
+      <a href="/" class="btn btn-secondary">
+        <i class="bi bi-x-circle me-1"></i>Cancelar
+      </a>
+      <button type="submit" class="btn btn-success">
+        <i class="bi bi-check-circle me-1"></i>Guardar
+      </button>
+    </div>
   </form>
 </div>
 {% endblock %}
