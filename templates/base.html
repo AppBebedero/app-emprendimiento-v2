@@ -10,22 +10,24 @@
   <style>
     body {
       background: {{ ColorFondo }};
-      padding-top: 56px;
-      padding-bottom: 56px;
+      padding-top: 56px;   /* espacio para navbar */
+      padding-bottom: 56px;/* espacio para bottom bar */
     }
     .navbar-brand img {
-      height: 60px;
-      margin: 0 auto;
-      display: block;
+      height: 80px;       /* logo más grande */
+      margin-right: .5rem;
     }
-    /* Offcanvas más estrecho y color menta */
+    .navbar-text {
+      color: white;
+      font-size: 1.25rem;
+      margin-right: 1rem;
+    }
     .offcanvas-start {
       width: 240px;
     }
     .offcanvas-body {
       background: #98FF98;
     }
-    /* Bottom nav */
     .bottom-nav {
       height: 56px;
       background: {{ ColorPrincipal }};
@@ -43,9 +45,11 @@
 
   <!-- Top Navbar -->
   <nav class="navbar navbar-dark fixed-top" style="background: {{ ColorPrincipal }};">
-    <div class="container-fluid justify-content-center position-relative">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <!-- Título de página dentro del nav -->
+      <span class="navbar-text">{% block title %}Mi App{% endblock %}</span>
       <!-- Logo centrado -->
-      <a class="navbar-brand" href="{{ url_for('core.inicio') }}">
+      <a class="navbar-brand mx-auto d-flex align-items-center" href="{{ url_for('core.inicio') }}">
         {% if LogoURL %}
           <img src="{{ LogoURL }}" alt="Logo">
         {% else %}
@@ -53,8 +57,7 @@
         {% endif %}
       </a>
       <!-- Botón hamburguesa a la derecha -->
-      <button class="btn btn-dark position-absolute end-0 me-2" type="button"
-              data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+      <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
         <i class="bi bi-list"></i>
       </button>
     </div>
@@ -69,10 +72,8 @@
     <div class="offcanvas-body p-0">
       <div class="list-group list-group-flush">
         <!-- Compras -->
-        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-           data-bs-toggle="collapse" href="#menuCompras">
-          <span><i class="bi bi-cart"></i> Compras</span>
-          <i class="bi bi-chevron-down"></i>
+        <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuCompras">
+          <i class="bi bi-cart me-1"></i> Compras <i class="bi bi-chevron-down float-end"></i>
         </a>
         <div class="collapse ps-3" id="menuCompras">
           <a class="list-group-item list-group-item-action" href="#">Materiales</a>
@@ -80,30 +81,20 @@
           <a class="list-group-item list-group-item-action" href="#">Proveedores</a>
           <a class="list-group-item list-group-item-action" href="#">Productos</a>
         </div>
-
         <!-- Ventas -->
-        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-           data-bs-toggle="collapse" href="#menuVentas">
-          <span><i class="bi bi-currency-dollar"></i> Ventas</span>
-          <i class="bi bi-chevron-down"></i>
+        <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuVentas">
+          <i class="bi bi-currency-dollar me-1"></i> Ventas <i class="bi bi-chevron-down float-end"></i>
         </a>
         <div class="collapse ps-3" id="menuVentas">
           <a class="list-group-item list-group-item-action" href="#">Registrar Venta</a>
         </div>
-
         <!-- Finanzas -->
         <a class="list-group-item list-group-item-action" href="#">
-          <i class="bi bi-bar-chart"></i> Finanzas
+          <i class="bi bi-bar-chart me-1"></i> Finanzas
         </a>
-
         <!-- Configuración -->
         <a class="list-group-item list-group-item-action" href="{{ url_for('core.configuracion') }}">
-          <i class="bi bi-gear"></i> Configuración
-        </a>
-
-        <!-- Otros -->
-        <a class="list-group-item list-group-item-action" href="#">
-          <i class="bi bi-grid"></i> Otros
+          <i class="bi bi-gear me-1"></i> Configuración
         </a>
       </div>
     </div>
