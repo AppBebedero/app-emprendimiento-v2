@@ -1,5 +1,8 @@
 {
-  "URLScriptConfig": "https://TU-APPS-SCRIPT-URL/exec",
+  "NombreNegocio": "Mi Empresa",
+  "LogoURL": "",
+  "ColorPrincipal": "#0d6efd",
+  "ColorFondo": "#ffffff",
   "PlanDeCuentasCSV": "data/plan_de_cuentas.csv",
   "JournalCSV": "data/journal_entries.csv"
 }
