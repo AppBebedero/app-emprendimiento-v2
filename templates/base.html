@@ -46,16 +46,15 @@
   <!-- Top Navbar -->
   <nav class="navbar navbar-dark fixed-top" style="background: {{ ColorPrincipal }};">
     <div class="container-fluid d-flex align-items-center justify-content-between">
-      <!-- Título de página dentro del nav -->
-      <span class="navbar-text">{% block title %}Mi App{% endblock %}</span>
-      <!-- Logo centrado -->
+      <!-- Podrías usar un nuevo bloque page_header si quieres títulos distintos -->
+      <span class="navbar-text">{{ NombreNegocio }}</span>
+
       <a class="navbar-brand mx-auto d-flex align-items-center" href="{{ url_for('core.inicio') }}">
         {% if LogoURL %}
           <img src="{{ LogoURL }}" alt="Logo">
-        {% else %}
-          {{ NombreNegocio }}
         {% endif %}
       </a>
+
       <!-- Botón hamburguesa a la derecha -->
       <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
         <i class="bi bi-list"></i>
@@ -81,6 +80,7 @@
           <a class="list-group-item list-group-item-action" href="#">Proveedores</a>
           <a class="list-group-item list-group-item-action" href="#">Productos</a>
         </div>
+
         <!-- Ventas -->
         <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuVentas">
           <i class="bi bi-currency-dollar me-1"></i> Ventas <i class="bi bi-chevron-down float-end"></i>
@@ -88,10 +88,12 @@
         <div class="collapse ps-3" id="menuVentas">
           <a class="list-group-item list-group-item-action" href="#">Registrar Venta</a>
         </div>
+
         <!-- Finanzas -->
         <a class="list-group-item list-group-item-action" href="#">
           <i class="bi bi-bar-chart me-1"></i> Finanzas
         </a>
+
         <!-- Configuración -->
         <a class="list-group-item list-group-item-action" href="{{ url_for('core.configuracion') }}">
           <i class="bi bi-gear me-1"></i> Configuración
