@@ -1,41 +1,34 @@
 {% extends 'base.html' %}
-{% block title %}Configuración del sistema{% endblock %}
+{% block title %}Configuración{% endblock %}
 {% block content %}
-<div class="card p-4 m-4">
-  <h3>Configuración del sistema</h3>
-  <form action="{{ url_for('core.configuracion') }}" method="POST" enctype="multipart/form-data">
-    <div class="mb-3">
-      <label for="NombreNegocio" class="form-label">Nombre del negocio</label>
-      <input id="NombreNegocio" name="NombreNegocio" class="form-control" required
-             value="{{ config.get('NombreNegocio','') }}">
-    </div>
-    <div class="mb-3">
-      <label for="LogoArchivo" class="form-label">Logo del negocio</label>
-      <input id="LogoArchivo" type="file" name="LogoArchivo" class="form-control">
-      <div class="mt-2">
-        {% if logo_exists %}
-          <img src="{{ logo_url }}" alt="Logo actual" style="max-height:80px;">
+<div class="card mx-auto my-5" style="max-width:500px;">
+  <div class="card-body">
+    <h4 class="card-title">Configuración del sistema</h4>
+    <form action="{{ url_for('core.configuracion') }}" method="POST" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label class="form-label">Nombre del negocio</label>
+        <input name="NombreNegocio" class="form-control" required value="{{ NombreNegocio }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Logo del negocio</label>
+        <input type="file" name="LogoArchivo" class="form-control">
+        {% if LogoURL %}
+          <img src="{{ LogoURL }}" alt="Logo" class="mt-2" style="height:80px;">
         {% endif %}
       </div>
-    </div>
-    <div class="mb-3">
-      <label for="ColorPrincipal" class="form-label">Color principal</label>
-      <input id="ColorPrincipal" type="color" name="ColorPrincipal" class="form-control"
-             value="{{ color_principal }}">
-    </div>
-    <div class="mb-3">
-      <label for="ColorFondo" class="form-label">Color de fondo</label>
-      <input id="ColorFondo" type="color" name="ColorFondo" class="form-control"
-             value="{{ color_fondo }}">
-    </div>
-    <div class="d-flex justify-content-between">
-      <a href="{{ url_for('core.inicio') }}" class="btn btn-secondary">
-        Cancelar
-      </a>
-      <button type="submit" class="btn btn-success">
-        Guardar cambios
-      </button>
-    </div>
-  </form>
+      <div class="mb-3">
+        <label class="form-label">Color principal</label>
+        <input type="color" name="ColorPrincipal" class="form-control" value="{{ ColorPrincipal }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Color de fondo</label>
+        <input type="color" name="ColorFondo" class="form-control" value="{{ ColorFondo }}">
+      </div>
+      <div class="d-flex justify-content-between">
+        <a href="{{ url_for('core.inicio') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-success">Guardar</button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}
