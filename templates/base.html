@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}Mi App{% endblock %}</title>
+  <title>{{ NombreNegocio }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Bootstrap CSS + Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -14,19 +14,18 @@
       padding-bottom: 56px;/* espacio para bottom bar */
     }
     .navbar-brand img {
-      height: 80px;       /* logo más grande */
-      margin-right: .5rem;
+      height: 50px;
     }
-    .navbar-text {
+    .navbar-title {
       color: white;
       font-size: 1.25rem;
-      margin-right: 1rem;
+      font-weight: bold;
     }
     .offcanvas-start {
-      width: 240px;
+      width: 220px;
     }
     .offcanvas-body {
-      background: #98FF98;
+      background: #40E0D0;  /* turquesa */
     }
     .bottom-nav {
       height: 56px;
@@ -34,7 +33,7 @@
     }
     .bottom-nav .nav-link {
       color: white;
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
     .bottom-nav .nav-link.active {
       color: yellow;
@@ -46,17 +45,18 @@
   <!-- Top Navbar -->
   <nav class="navbar navbar-dark fixed-top" style="background: {{ ColorPrincipal }};">
     <div class="container-fluid d-flex align-items-center justify-content-between">
-      <!-- Podrías usar un nuevo bloque page_header si quieres títulos distintos -->
-      <span class="navbar-text">{{ NombreNegocio }}</span>
-
-      <a class="navbar-brand mx-auto d-flex align-items-center" href="{{ url_for('core.inicio') }}">
+      <!-- Logo -->
+      <a class="navbar-brand p-0 me-2" href="{{ url_for('core.inicio') }}">
         {% if LogoURL %}
           <img src="{{ LogoURL }}" alt="Logo">
         {% endif %}
       </a>
-
-      <!-- Botón hamburguesa a la derecha -->
-      <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+      <!-- Título centrado -->
+      <div class="navbar-title text-center flex-grow-1">
+        {{ NombreNegocio }}
+      </div>
+      <!-- Botón hamburguesa -->
+      <button class="btn btn-dark ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
         <i class="bi bi-list"></i>
       </button>
     </div>
@@ -75,7 +75,6 @@
           <i class="bi bi-cart me-1"></i> Compras <i class="bi bi-chevron-down float-end"></i>
         </a>
         <div class="collapse ps-3" id="menuCompras">
-          <a class="list-group-item list-group-item-action" href="#">Materiales</a>
           <a class="list-group-item list-group-item-action" href="{{ url_for('compras.compras') }}">Registrar Compra</a>
           <a class="list-group-item list-group-item-action" href="#">Proveedores</a>
           <a class="list-group-item list-group-item-action" href="#">Productos</a>
