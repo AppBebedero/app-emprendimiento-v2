@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4 m-4">
+  <h3>Configuración del sistema</h3>
+  <form method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label>Nombre del negocio</label>
+      <input name="NombreNegocio" class="form-control" required
+             value="{{ config.get('NombreNegocio','') }}">
+    </div>
+    <div class="mb-3">
+      <label>Logo</label>
+      <input type="file" name="LogoArchivo" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label>Color principal</label>
+      <input type="color" name="ColorPrincipal" class="form-control"
+             value="{{ config.get('ColorPrincipal','#0d6efd') }}">
+    </div>
+    <div class="mb-3">
+      <label>Color de fondo</label>
+      <input type="color" name="ColorFondo" class="form-control"
+             value="{{ config.get('ColorFondo','#ffffff') }}">
+    </div>
+    <button class="btn btn-success">Guardar</button>
+  </form>
+</div>
+{% endblock %}
