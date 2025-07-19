@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="text-center py-5">
+  <h1>Bienvenido a {{ config.get('NombreNegocio', '') }}</h1>
+  {% if config.get('LogoURL') %}
+    <img src="{{ config.get('LogoURL') }}" alt="Logo" style="max-height:150px;">
+  {% endif %}
+</div>
+{% endblock %}
