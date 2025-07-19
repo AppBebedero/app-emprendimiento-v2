@@ -3,32 +3,154 @@
 <head>
   <meta charset="utf-8">
   <title>{% block title %}Mi App{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS + Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>body{background:{{ ColorFondo }};} .navbar{background:{{ ColorPrincipal }};}</style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: {{ ColorFondo }};
+      padding-top: 56px;  /* espacio para navbar */
+      padding-bottom: 56px; /* espacio para bottom bar */
+    }
+    .navbar-brand img {
+      height: 40px;
+      margin-right: .5rem;
+    }
+    .offcanvas-body .nav-link {
+      cursor: pointer;
+    }
+    .bottom-nav {
+      height: 56px;
+      background: {{ ColorPrincipal }};
+    }
+    .bottom-nav .nav-link {
+      color: white;
+      font-size: 1.2rem;
+    }
+    .bottom-nav .nav-link.active {
+      color: yellow;
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg">
+
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: {{ ColorPrincipal }};">
     <div class="container-fluid">
-      <a class="navbar-brand text-white" href="{{ url_for('core.inicio') }}">{{ NombreNegocio }}</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-        <span class="navbar-toggler-icon"></span>
+      <button class="btn btn-dark me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+        <i class="bi bi-list"></i>
       </button>
-      <div class="collapse navbar-collapse" id="nav">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('compras.compras') }}">Compras</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('core.configuracion') }}">Configuración</a></li>
-        </ul>
-      </div>
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('core.inicio') }}">
+        {% if LogoURL %}
+          <img src="{{ LogoURL }}" alt="Logo">
+        {% endif %}
+        <span>{{ NombreNegocio }}</span>
+      </a>
     </div>
   </nav>
 
-  <div class="container my-4">
+  <!-- Sidebar Offcanvas -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">{{ NombreNegocio }}</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <div class="list-group list-group-flush">
+        <!-- Compras -->
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+           data-bs-toggle="collapse" href="#menuCompras">
+          <span><i class="bi bi-cart"></i> Compras</span>
+          <i class="bi bi-chevron-down"></i>
+        </a>
+        <div class="collapse ps-3" id="menuCompras">
+          <a class="list-group-item list-group-item-action" href="{{ url_for('compras.compras') }}">Registrar</a>
+        </div>
+
+        <!-- Ventas -->
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+           data-bs-toggle="collapse" href="#menuVentas">
+          <span><i class="bi bi-currency-dollar"></i> Ventas</span>
+          <i class="bi bi-chevron-down"></i>
+        </a>
+        <div class="collapse ps-3" id="menuVentas">
+          <a class="list-group-item list-group-item-action" href="#">Registrar</a>
+        </div>
+
+        <!-- Finanzas -->
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+           data-bs-toggle="collapse" href="#menuFinanzas">
+          <span><i class="bi bi-bar-chart"></i> Finanzas</span>
+          <i class="bi bi-chevron-down"></i>
+        </a>
+        <div class="collapse ps-3" id="menuFinanzas">
+          <a class="list-group-item list-group-item-action" href="#">Reportes</a>
+        </div>
+
+        <!-- Configuración -->
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+           data-bs-toggle="collapse" href="#menuConfiguracion">
+          <span><i class="bi bi-gear"></i> Configuración</span>
+          <i class="bi bi-chevron-down"></i>
+        </a>
+        <div class="collapse ps-3" id="menuConfiguracion">
+          <a class="list-group-item list-group-item-action"
+             href="{{ url_for('core.configuracion') }}">Sistema</a>
+        </div>
+
+        <!-- Otros -->
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+           data-bs-toggle="collapse" href="#menuOtros">
+          <span><i class="bi bi-grid"></i> Otros</span>
+          <i class="bi bi-chevron-down"></i>
+        </a>
+        <div class="collapse ps-3" id="menuOtros">
+          <a class="list-group-item list-group-item-action" href="#">Acerca de</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <main class="container">
     {% with msgs = get_flashed_messages(with_categories=true) %}
-      {% for cat, m in msgs %}
-        <div class="alert alert-{{ 'danger' if cat=='danger' else 'success' }}">{{ m }}</div>
-      {% endfor %}
+      {% if msgs %}
+        {% for cat, m in msgs %}
+          <div class="alert alert-{{ 'danger' if cat=='danger' else 'success' }}">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
     {% endwith %}
     {% block content %}{% endblock %}
-  </div>
+  </main>
+
+  <!-- Bottom Navbar -->
+  <nav class="navbar fixed-bottom bottom-nav">
+    <div class="container-fluid justify-content-around">
+      <a class="nav-link {% if request.path.startswith('/compras') %}active{% endif %}"
+         href="{{ url_for('compras.compras') }}">
+        <i class="bi bi-cart"></i><br>Compras
+      </a>
+      <a class="nav-link {% if request.path.startswith('/ventas') %}active{% endif %}"
+         href="#">
+        <i class="bi bi-currency-dollar"></i><br>Ventas
+      </a>
+      <a class="nav-link {% if request.path.startswith('/finanzas') %}active{% endif %}"
+         href="#">
+        <i class="bi bi-bar-chart"></i><br>Finanzas
+      </a>
+      <a class="nav-link {% if request.path.startswith('/configuracion') %}active{% endif %}"
+         href="{{ url_for('core.configuracion') }}">
+        <i class="bi bi-gear"></i><br>Config
+      </a>
+      <a class="nav-link {% if request.path.startswith('/otros') %}active{% endif %}"
+         href="#">
+        <i class="bi bi-grid"></i><br>Otros
+      </a>
+    </div>
+  </nav>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
