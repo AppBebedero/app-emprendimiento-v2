@@ -1,34 +1,107 @@
 {% extends 'base.html' %}
-{% block title %}Configuración{% endblock %}
+
+{% block title %}Configuración del sistema{% endblock %}
+{% block topbar_title %}Configuración del sistema{% endblock %}
+
 {% block content %}
-<div class="card mx-auto my-5" style="max-width:500px;">
-  <div class="card-body">
-    <h4 class="card-title">Configuración del sistema</h4>
-    <form action="{{ url_for('core.configuracion') }}" method="POST" enctype="multipart/form-data">
+<div class="container mt-5 mb-5" style="max-width: 600px;">
+  <div class="card shadow p-4">
+    <h4 class="text-center mb-4"><i class="bi bi-gear-fill me-2"></i>Configuración del Sistema</h4>
+
+    <form id="configForm">
       <div class="mb-3">
-        <label class="form-label">Nombre del negocio</label>
-        <input name="NombreNegocio" class="form-control" required value="{{ NombreNegocio }}">
+        <label for="nombreNegocio" class="form-label"><i class="bi bi-shop me-2"></i>Nombre del Negocio</label>
+        <input type="text" class="form-control" id="nombreNegocio" name="NombreNegocio" value="{{ config.get('NombreNegocio', '') }}" required>
       </div>
+
       <div class="mb-3">
-        <label class="form-label">Logo del negocio</label>
-        <input type="file" name="LogoArchivo" class="form-control">
-        {% if LogoURL %}
-          <img src="{{ LogoURL }}" alt="Logo" class="mt-2" style="height:80px;">
-        {% endif %}
+        <label for="logoFile" class="form-label"><i class="bi bi-image me-2"></i>Logo del Negocio</label>
+        <input type="file" class="form-control" id="logoFile" accept="image/*">
+        <img id="logoPreview" src="{{ config.get('LogoURL', '') }}" alt="Vista previa del logo" class="img-fluid mt-3 border" style="max-height: 150px;">
       </div>
+
       <div class="mb-3">
-        <label class="form-label">Color principal</label>
-        <input type="color" name="ColorPrincipal" class="form-control" value="{{ ColorPrincipal }}">
+        <label for="colorPrincipal" class="form-label"><i class="bi bi-palette me-2"></i>Color Principal</label>
+        <input type="color" class="form-control form-control-color" id="colorPrincipal" name="ColorPrincipal" value="{{ config.get('ColorPrincipal', '#0d6efd') }}">
       </div>
+
       <div class="mb-3">
-        <label class="form-label">Color de fondo</label>
-        <input type="color" name="ColorFondo" class="form-control" value="{{ ColorFondo }}">
+        <label for="colorFondo" class="form-label"><i class="bi bi-palette2 me-2"></i>Color de Fondo</label>
+        <input type="color" class="form-control form-control-color" id="colorFondo" name="ColorFondo" value="{{ config.get('ColorFondo', '#ffffff') }}">
       </div>
+
       <div class="d-flex justify-content-between">
-        <a href="{{ url_for('core.inicio') }}" class="btn btn-secondary">Cancelar</a>
-        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="/" class="btn btn-danger"><i class="bi bi-x-circle"></i> Cancelar</a>
+        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar cambios</button>
       </div>
     </form>
   </div>
 </div>
+
+<script>
+document.getElementById('logoFile').addEventListener('change', function () {
+  const preview = document.getElementById('logoPreview');
+  const file = this.files[0];
+  if (file) {
+    preview.src = URL.createObjectURL(file);
+  }
+});
+
+document.getElementById('configForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const form = e.target;
+
+  const nombreNegocio = form.NombreNegocio.value;
+  const colorPrincipal = form.ColorPrincipal.value;
+  const colorFondo = form.ColorFondo.value;
+  const logoFile = document.getElementById('logoFile').files[0];
+
+  const data = {
+    NombreNegocio: nombreNegocio,
+    ColorPrincipal: colorPrincipal,
+    ColorFondo: colorFondo
+  };
+
+  try {
+    // Enviar logo (si se seleccionó)
+    if (logoFile) {
+      const reader = new FileReader();
+      reader.onloadend = async function () {
+        const base64Logo = reader.result.split(',')[1];
+
+        const respuestaLogo = await fetch('{{ config["URLScriptConfig"] }}', {
+          method: 'POST',
+          body: JSON.stringify({
+            clave: 'LogoURL',
+            valor: base64Logo,
+            tipo: 'imagen'
+          })
+        });
+
+        const r1 = await respuestaLogo.text();
+        console.log('Respuesta logo:', r1);
+      };
+      reader.readAsDataURL(logoFile);
+    }
+
+    // Enviar colores y nombre
+    for (const clave in data) {
+      await fetch('{{ config["URLScriptConfig"] }}', {
+        method: 'POST',
+        body: JSON.stringify({
+          clave: clave,
+          valor: data[clave]
+        })
+      });
+    }
+
+    alert('Configuración actualizada');
+    window.location.href = '/';
+
+  } catch (error) {
+    console.error('Error al guardar configuración:', error);
+    alert('Ocurrió un error al guardar los datos');
+  }
+});
+</script>
 {% endblock %}
