@@ -22,7 +22,7 @@
       font-weight: bold;
     }
     .offcanvas-start {
-      width: 190px;     /* Un poco más ancho para textos largos */
+      width: 210px; /* Más ancho para submenús */
     }
     .offcanvas-body {
       background: #40E0D0;  /* turquesa */
@@ -38,7 +38,7 @@
     .bottom-nav .nav-link.active {
       color: yellow;
     }
-    /* Ajusta tamaño de iconos y alineación */
+    /* Ajuste de iconos y alineación */
     .list-group-item i {
       font-size: 1.3rem;
       vertical-align: middle;
@@ -58,7 +58,7 @@
   <!-- Top Navbar -->
   <nav class="navbar navbar-dark fixed-top" style="background: {{ ColorPrincipal }};">
     <div class="container-fluid d-flex align-items-center justify-content-between">
-      <!-- Logo pequeño a la izquierda -->
+      <!-- Logo a la izquierda -->
       <a class="navbar-brand p-0 me-2" href="{{ url_for('core.inicio') }}">
         {% if LogoURL %}
           <img src="{{ LogoURL }}" alt="Logo">
@@ -89,8 +89,8 @@
         </a>
         <div class="collapse" id="menuCompras">
           <a class="list-group-item list-group-item-action" href="{{ url_for('compras.compras') }}">Registrar Compra</a>
-          <a class="list-group-item list-group-item-action" href="{{ url_for('compras.proveedores') }}">Proveedores</a>
-          <a class="list-group-item list-group-item-action" href="{{ url_for('compras.productos') }}">Productos</a>
+          <a class="list-group-item list-group-item-action" href="#">Proveedores</a>
+          <a class="list-group-item list-group-item-action" href="#">Productos</a>
         </div>
 
         <!-- Ventas con submenú -->
@@ -99,24 +99,37 @@
         </a>
         <div class="collapse" id="menuVentas">
           <a class="list-group-item list-group-item-action" href="#">Registrar Venta</a>
-          <!-- Puedes agregar más opciones aquí -->
         </div>
 
-        <!-- Finanzas (sin submenú) -->
-        <a class="list-group-item list-group-item-action" href="#">
+        <!-- Finanzas con submenú -->
+        <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuFinanzas" aria-expanded="false" aria-controls="menuFinanzas">
           <i class="bi bi-bar-chart"></i> Finanzas
         </a>
+        <div class="collapse" id="menuFinanzas">
+          <a class="list-group-item list-group-item-action" href="#">Caja y Bancos</a>
+          <a class="list-group-item list-group-item-action" href="#">Registrar Ingreso</a>
+          <a class="list-group-item list-group-item-action" href="#">Registrar Egreso</a>
+          <a class="list-group-item list-group-item-action" href="#">Conciliación Bancaria</a>
+          <a class="list-group-item list-group-item-action" href="#">Asientos Contables</a>
+        </div>
 
-        <!-- Reportes (sin submenú) -->
-        <a class="list-group-item list-group-item-action" href="#">
+        <!-- Reportes con submenú -->
+        <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuReportes" aria-expanded="false" aria-controls="menuReportes">
           <i class="bi bi-file-earmark-text"></i> Reportes
         </a>
+        <div class="collapse" id="menuReportes">
+          <a class="list-group-item list-group-item-action" href="#">Compras</a>
+          <a class="list-group-item list-group-item-action" href="#">Ventas</a>
+          <a class="list-group-item list-group-item-action" href="#">Estado de Resultados</a>
+          <a class="list-group-item list-group-item-action" href="#">Inventario</a>
+          <a class="list-group-item list-group-item-action" href="#">Libro Diario</a>
+          <a class="list-group-item list-group-item-action" href="#">Balance General</a>
+        </div>
 
         <!-- Configuración -->
         <a class="list-group-item list-group-item-action" href="{{ url_for('core.configuracion') }}">
           <i class="bi bi-gear"></i> Configuración
         </a>
-
         <!-- Acerca de -->
         <a class="list-group-item list-group-item-action" href="{{ url_for('core.acerca') }}">
           <i class="bi bi-info-circle"></i> Acerca de
