@@ -69,7 +69,7 @@ document.getElementById('configForm').addEventListener('submit', async function 
       reader.onloadend = async function () {
         const base64Logo = reader.result.split(',')[1];
 
-        const respuestaLogo = await fetch('{{ config["URLScriptConfig"] }}', {
+        await fetch('{{ config["URLScriptConfig"] }}', {
           method: 'POST',
           body: JSON.stringify({
             clave: 'LogoURL',
@@ -77,9 +77,6 @@ document.getElementById('configForm').addEventListener('submit', async function 
             tipo: 'imagen'
           })
         });
-
-        const r1 = await respuestaLogo.text();
-        console.log('Respuesta logo:', r1);
       };
       reader.readAsDataURL(logoFile);
     }
@@ -95,8 +92,8 @@ document.getElementById('configForm').addEventListener('submit', async function 
       });
     }
 
-    alert('Configuración actualizada');
-    window.location.href = '/';
+    // Refrescar la página principal para ver los cambios al volver
+    setTimeout(() => { window.location.href = '/'; }, 600);
 
   } catch (error) {
     console.error('Error al guardar configuración:', error);
