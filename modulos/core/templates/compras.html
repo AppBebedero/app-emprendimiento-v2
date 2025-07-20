@@ -97,7 +97,19 @@
         </div>
         <div class="modal-body">
           <label class="form-label">Nombre:</label>
-          <input type="text" name="Nombre" class="form-control" required>
+          <input type="text" name="Nombre" class="form-control mb-2" required>
+          <label class="form-label">Teléfono:</label>
+          <input type="text" name="Telefono" class="form-control mb-2">
+          <label class="form-label">Email:</label>
+          <input type="email" name="Email" class="form-control mb-2">
+          <label class="form-label">Contacto:</label>
+          <input type="text" name="Contacto" class="form-control mb-2">
+          <label class="form-label">Celular:</label>
+          <input type="text" name="Celular" class="form-control mb-2">
+          <label class="form-label">Tipo de Negocio:</label>
+          <input type="text" name="TipoNegocio" class="form-control mb-2">
+          <label class="form-label">Observaciones:</label>
+          <textarea name="Observaciones" class="form-control mb-2"></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -119,7 +131,13 @@
         </div>
         <div class="modal-body">
           <label class="form-label">Nombre:</label>
-          <input type="text" name="Nombre" class="form-control" required>
+          <input type="text" name="Nombre" class="form-control mb-2" required>
+          <label class="form-label">Categoría:</label>
+          <input type="text" name="Categoria" class="form-control mb-2">
+          <label class="form-label">Unidad:</label>
+          <input type="text" name="Unidad" class="form-control mb-2">
+          <label class="form-label">Observaciones:</label>
+          <textarea name="Observaciones" class="form-control mb-2"></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -134,19 +152,19 @@
 // Guardar Proveedor
 document.getElementById('formProveedor').addEventListener('submit', function(e) {
   e.preventDefault();
-  const nombre = this.Nombre.value;
+  const datos = Object.fromEntries(new FormData(this));
   fetch('/guardar_proveedor', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({Nombre: nombre})
+    body: JSON.stringify(datos)
   })
   .then(res => res.json())
   .then(data => {
     if (data.success) {
       const select = document.getElementById('proveedor');
-      const option = new Option(nombre, nombre);
+      const option = new Option(datos.Nombre, datos.Nombre);
       select.add(option);
-      select.value = nombre;
+      select.value = datos.Nombre;
       bootstrap.Modal.getInstance(document.getElementById('modalProveedor')).hide();
     } else {
       alert(data.message || 'Error al guardar proveedor');
@@ -157,19 +175,19 @@ document.getElementById('formProveedor').addEventListener('submit', function(e) 
 // Guardar Producto
 document.getElementById('formProducto').addEventListener('submit', function(e) {
   e.preventDefault();
-  const nombre = this.Nombre.value;
+  const datos = Object.fromEntries(new FormData(this));
   fetch('/guardar_producto', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({Nombre: nombre})
+    body: JSON.stringify(datos)
   })
   .then(res => res.json())
   .then(data => {
     if (data.success) {
       const select = document.getElementById('producto');
-      const option = new Option(nombre, nombre);
+      const option = new Option(datos.Nombre, datos.Nombre);
       select.add(option);
-      select.value = nombre;
+      select.value = datos.Nombre;
       bootstrap.Modal.getInstance(document.getElementById('modalProducto')).hide();
     } else {
       alert(data.message || 'Error al guardar producto');
