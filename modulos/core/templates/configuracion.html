@@ -43,7 +43,25 @@
 </div>
 
 <script>
-document.getElementById('logoFile').addEventListener('change', function () {
+// Cargar configuración al iniciar (si existe en localStorage)
+document.addEventListener('DOMContentLoaded', function() {
+  const savedConfig = JSON.parse(localStorage.getItem('appConfig')) || {};
+  if (savedConfig.NombreNegocio) {
+    document.getElementById('nombreNegocio').value = savedConfig.NombreNegocio;
+  }
+  if (savedConfig.ColorPrincipal) {
+    document.getElementById('colorPrincipal').value = savedConfig.ColorPrincipal;
+  }
+  if (savedConfig.ColorFondo) {
+    document.getElementById('colorFondo').value = savedConfig.ColorFondo;
+  }
+  if (savedConfig.LogoURL) {
+    document.getElementById('logoPreview').src = savedConfig.LogoURL;
+  }
+});
+
+// Vista previa del logo
+document.getElementById('logoFile').addEventListener('change', function() {
   const preview = document.getElementById('logoPreview');
   const file = this.files[0];
   if (file) {
@@ -51,27 +69,29 @@ document.getElementById('logoFile').addEventListener('change', function () {
   }
 });
 
-document.getElementById('configForm').addEventListener('submit', async function (e) {
+// Guardar configuración
+document.getElementById('configForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   document.getElementById('mensajeProcesando').style.display = 'block';
 
   const form = e.target;
-  const nombreNegocio = form.NombreNegocio.value;
-  const colorPrincipal = form.ColorPrincipal.value;
-  const colorFondo = form.ColorFondo.value;
-  const logoFile = document.getElementById('logoFile').files[0];
-
-  const data = {
-    NombreNegocio: nombreNegocio,
-    ColorPrincipal: colorPrincipal,
-    ColorFondo: colorFondo
+  const config = {
+    NombreNegocio: form.NombreNegocio.value,
+    ColorPrincipal: form.ColorPrincipal.value,
+    ColorFondo: form.ColorFondo.value,
+    LogoURL: document.getElementById('logoPreview').src
   };
 
   try {
-    // Enviar logo (si se seleccionó)
+    // Guardar en localStorage (persistencia inmediata)
+    localStorage.setItem('appConfig', JSON.stringify(config));
+
+    // Guardar en el servidor (manteniendo tu lógica actual)
+    const logoFile = document.getElementById('logoFile').files[0];
+    
     if (logoFile) {
       const reader = new FileReader();
-      reader.onloadend = async function () {
+      reader.onloadend = async function() {
         const base64Logo = reader.result.split(',')[1];
         await fetch('{{ config["URLScriptConfig"] }}', {
           method: 'POST',
@@ -85,22 +105,36 @@ document.getElementById('configForm').addEventListener('submit', async function 
       reader.readAsDataURL(logoFile);
     }
 
-    // Enviar colores y nombre
-    for (const clave in data) {
-      await fetch('{{ config["URLScriptConfig"] }}', {
-        method: 'POST',
-        body: JSON.stringify({
-          clave: clave,
-          valor: data[clave]
-        })
-      });
-    }
+    // Enviar otros datos al servidor
+    await fetch('{{ config["URLScriptConfig"] }}', {
+      method: 'POST',
+      body: JSON.stringify({
+        clave: 'NombreNegocio',
+        valor: config.NombreNegocio
+      })
+    });
+
+    await fetch('{{ config["URLScriptConfig"] }}', {
+      method: 'POST',
+      body: JSON.stringify({
+        clave: 'ColorPrincipal',
+        valor: config.ColorPrincipal
+      })
+    });
+
+    await fetch('{{ config["URLScriptConfig"] }}', {
+      method: 'POST',
+      body: JSON.stringify({
+        clave: 'ColorFondo',
+        valor: config.ColorFondo
+      })
+    });
 
     setTimeout(() => { window.location.href = '/'; }, 1200);
 
   } catch (error) {
-    console.error('Error al guardar configuración:', error);
-    alert('Ocurrió un error al guardar los datos');
+    console.error('Error:', error);
+    alert('Error al guardar. Los cambios se mantendrán localmente hasta la próxima sesión.');
     document.getElementById('mensajeProcesando').style.display = 'none';
   }
 });
