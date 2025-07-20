@@ -22,10 +22,10 @@
       font-weight: bold;
     }
     .offcanvas-start {
-      width: 210px; /* Más ancho para submenús */
+      width: 210px;
     }
     .offcanvas-body {
-      background: #40E0D0;  /* turquesa */
+      background: #40E0D0;
     }
     .bottom-nav {
       height: 56px;
@@ -38,7 +38,6 @@
     .bottom-nav .nav-link.active {
       color: yellow;
     }
-    /* Ajuste de iconos y alineación */
     .list-group-item i {
       font-size: 1.3rem;
       vertical-align: middle;
@@ -58,15 +57,12 @@
   <!-- Top Navbar -->
   <nav class="navbar navbar-dark fixed-top" style="background: {{ ColorPrincipal }};">
     <div class="container-fluid d-flex align-items-center justify-content-between">
-      <!-- Logo a la izquierda -->
       <a class="navbar-brand p-0 me-2" href="{{ url_for('core.inicio') }}">
         {% if LogoURL %}
           <img src="{{ LogoURL }}" alt="Logo">
         {% endif %}
       </a>
-      <!-- Título centrado -->
       <div class="navbar-title flex-grow-1 text-center">{{ NombreNegocio }}</div>
-      <!-- Botón hamburguesa a la derecha -->
       <button class="btn btn-dark ms-2 p-1" style="font-size:1.25rem;" type="button"
               data-bs-toggle="offcanvas" data-bs-target="#sidebar">
         <i class="bi bi-list"></i>
@@ -131,11 +127,11 @@
           <i class="bi bi-gear"></i> Configuración
         </a>
         <!-- Acerca de -->
-        <a class="list-group-item list-group-item-action" href="{{ url_for('core.acerca') }}">
+        <a class="list-group-item list-group-item-action" href="#">
           <i class="bi bi-info-circle"></i> Acerca de
         </a>
         <!-- Manual de usuario -->
-        <a class="list-group-item list-group-item-action" href="{{ url_for('core.manual_usuario') }}">
+        <a class="list-group-item list-group-item-action" href="#">
           <i class="bi bi-book"></i> Manual Usuario
         </a>
       </div>
