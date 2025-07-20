@@ -9,9 +9,6 @@ template_dir = os.path.abspath('modulos/core/templates')
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'clave-secreta'
 
-# Cargar configuración al iniciar la app
-config = cargar_config()
-
 # Función para guardar datos en CSV
 def guardar_en_csv(ruta, datos, encabezados):
     existe = os.path.exists(ruta)
@@ -26,13 +23,22 @@ def guardar_en_csv(ruta, datos, encabezados):
 # -------------------------
 @app.route('/')
 def inicio():
-    return render_template('inicio.html', config=config)
+    config = cargar_config()
+    return render_template(
+        'inicio.html',
+        NombreNegocio=config.get('NombreNegocio', 'Mi Empresa'),
+        ColorFondo=config.get('ColorFondo', '#f8f9fa'),
+        ColorPrincipal=config.get('ColorPrincipal', '#0d6efd'),
+        LogoURL=config.get('LogoURL', ''),
+        config=config
+    )
 
 # -------------------------
 # RUTA: COMPRAS
 # -------------------------
 @app.route('/compras', methods=['GET', 'POST'])
 def compras():
+    config = cargar_config()
     proveedores = []
     productos = []
     try:
@@ -64,14 +70,23 @@ def compras():
         flash('Compra registrada exitosamente')
         return redirect('/compras')
 
-    return render_template('compras.html', config=config,
-                           proveedores=proveedores, productos=productos)
+    return render_template(
+        'compras.html',
+        NombreNegocio=config.get('NombreNegocio', 'Mi Empresa'),
+        ColorFondo=config.get('ColorFondo', '#f8f9fa'),
+        ColorPrincipal=config.get('ColorPrincipal', '#0d6efd'),
+        LogoURL=config.get('LogoURL', ''),
+        config=config,
+        proveedores=proveedores,
+        productos=productos
+    )
 
 # -------------------------
 # RUTA: GUARDAR PROVEEDOR
 # -------------------------
 @app.route('/guardar_proveedor', methods=['POST'])
 def guardar_proveedor():
+    config = cargar_config()
     datos = request.get_json()
     nombre = datos.get('Nombre', '').strip()
     if not nombre:
@@ -101,6 +116,7 @@ def guardar_proveedor():
 # -------------------------
 @app.route('/guardar_producto', methods=['POST'])
 def guardar_producto():
+    config = cargar_config()
     datos = request.get_json()
     nombre = datos.get('Nombre', '').strip()
     if not nombre:
@@ -130,8 +146,16 @@ def guardar_producto():
 # -------------------------
 @app.route('/configuracion', methods=['GET', 'POST'])
 def configuracion():
+    config = cargar_config()
     # Aquí sigue tu lógica actual para GET y POST (si existe)
-    return render_template('configuracion.html', config=config)
+    return render_template(
+        'configuracion.html',
+        NombreNegocio=config.get('NombreNegocio', 'Mi Empresa'),
+        ColorFondo=config.get('ColorFondo', '#f8f9fa'),
+        ColorPrincipal=config.get('ColorPrincipal', '#0d6efd'),
+        LogoURL=config.get('LogoURL', ''),
+        config=config
+    )
 
 # -------------------------
 # MAIN
