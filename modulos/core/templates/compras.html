@@ -77,7 +77,9 @@
           <textarea name="Observaciones" class="form-control"></textarea>
         </div>
       </div>
-
+      <div id="mensajeProcesandoCompra" class="text-center fw-bold" style="color:red; font-size:2rem; display:none;">
+        GUARDANDO...
+      </div>
       <div class="d-flex justify-content-between">
         <a href="/" class="btn btn-danger"><i class="bi bi-x-circle"></i> Cancelar</a>
         <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar</button>
@@ -99,17 +101,26 @@
           <label class="form-label">Nombre:</label>
           <input type="text" name="Nombre" class="form-control mb-2" required>
           <label class="form-label">Teléfono:</label>
-          <input type="text" name="Telefono" class="form-control mb-2">
+          <input type="text" name="Telefono" class="form-control mb-2" pattern="\d{4}-\d{4}" maxlength="9" placeholder="0000-0000" oninput="mascaraTel(this)">
           <label class="form-label">Email:</label>
           <input type="email" name="Email" class="form-control mb-2">
           <label class="form-label">Contacto:</label>
           <input type="text" name="Contacto" class="form-control mb-2">
           <label class="form-label">Celular:</label>
-          <input type="text" name="Celular" class="form-control mb-2">
+          <input type="text" name="Celular" class="form-control mb-2" pattern="\d{4}-\d{4}" maxlength="9" placeholder="0000-0000" oninput="mascaraTel(this)">
           <label class="form-label">Tipo de Negocio:</label>
-          <input type="text" name="TipoNegocio" class="form-control mb-2">
+          <select name="TipoNegocio" class="form-select mb-2">
+            <option value="">Seleccionar...</option>
+            <option value="Suministros">Suministros</option>
+            <option value="Oficina">Oficina</option>
+            <option value="Librería">Librería</option>
+            <option value="Otros">Otros</option>
+          </select>
           <label class="form-label">Observaciones:</label>
           <textarea name="Observaciones" class="form-control mb-2"></textarea>
+          <div id="mensajeProcesandoProv" class="text-center fw-bold" style="color:red; font-size:2rem; display:none;">
+            GUARDANDO...
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -133,11 +144,26 @@
           <label class="form-label">Nombre:</label>
           <input type="text" name="Nombre" class="form-control mb-2" required>
           <label class="form-label">Categoría:</label>
-          <input type="text" name="Categoria" class="form-control mb-2">
+          <select name="Categoria" class="form-select mb-2">
+            <option value="">Seleccionar...</option>
+            <option value="Producto Terminado">Producto Terminado</option>
+            <option value="Materia Prima">Materia Prima</option>
+            <option value="Suministros">Suministros</option>
+            <option value="Otros">Otros</option>
+          </select>
           <label class="form-label">Unidad:</label>
-          <input type="text" name="Unidad" class="form-control mb-2">
+          <select name="Unidad" class="form-select mb-2">
+            <option value="">Seleccionar...</option>
+            <option value="Unitario">Unitario</option>
+            <option value="Paquete">Paquete</option>
+            <option value="Caja">Caja</option>
+            <option value="Otros">Otros</option>
+          </select>
           <label class="form-label">Observaciones:</label>
           <textarea name="Observaciones" class="form-control mb-2"></textarea>
+          <div id="mensajeProcesandoProd" class="text-center fw-bold" style="color:red; font-size:2rem; display:none;">
+            GUARDANDO...
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -149,9 +175,17 @@
 </div>
 
 <script>
+// Máscara para teléfono/celular
+function mascaraTel(input) {
+  let v = input.value.replace(/\D/g,'').slice(0,8);
+  if(v.length > 4) input.value = v.slice(0,4)+'-'+v.slice(4);
+  else input.value = v;
+}
+
 // Guardar Proveedor
 document.getElementById('formProveedor').addEventListener('submit', function(e) {
   e.preventDefault();
+  document.getElementById('mensajeProcesandoProv').style.display = 'block';
   const datos = Object.fromEntries(new FormData(this));
   fetch('/guardar_proveedor', {
     method: 'POST',
@@ -160,6 +194,7 @@ document.getElementById('formProveedor').addEventListener('submit', function(e) 
   })
   .then(res => res.json())
   .then(data => {
+    document.getElementById('mensajeProcesandoProv').style.display = 'none';
     if (data.success) {
       const select = document.getElementById('proveedor');
       const option = new Option(datos.Nombre, datos.Nombre);
@@ -175,6 +210,7 @@ document.getElementById('formProveedor').addEventListener('submit', function(e) 
 // Guardar Producto
 document.getElementById('formProducto').addEventListener('submit', function(e) {
   e.preventDefault();
+  document.getElementById('mensajeProcesandoProd').style.display = 'block';
   const datos = Object.fromEntries(new FormData(this));
   fetch('/guardar_producto', {
     method: 'POST',
@@ -183,6 +219,7 @@ document.getElementById('formProducto').addEventListener('submit', function(e) {
   })
   .then(res => res.json())
   .then(data => {
+    document.getElementById('mensajeProcesandoProd').style.display = 'none';
     if (data.success) {
       const select = document.getElementById('producto');
       const option = new Option(datos.Nombre, datos.Nombre);
