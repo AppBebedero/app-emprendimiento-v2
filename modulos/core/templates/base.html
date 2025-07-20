@@ -165,7 +165,7 @@
   <nav class="navbar fixed-bottom bottom-nav">
     <div class="container-fluid justify-content-around">
       <a class="nav-link {% if request.path == url_for('core.inicio') %}active{% endif %}"
-         href="{{ url_for('core.inicio') }}">
+         href="{{ url_for('inicio') }}">
         <i class="bi bi-house"></i><br>Inicio
       </a>
       <a class="nav-link {% if request.path.startswith('/finanzas') %}active{% endif %}"
