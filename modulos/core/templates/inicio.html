@@ -4,28 +4,9 @@
 {% block topbar_title %}Inicio{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-
-  <!-- Logo grande centrado SOLO si quieres -->
-  <div class="d-flex flex-column align-items-center justify-content-center" style="min-height:40vh;">
-    {% if LogoURL %}
-      <img src="{{ LogoURL }}" alt="Logo grande" style="max-width:240px; max-height:240px; margin-bottom:24px; border-radius:18px; box-shadow:0 2px 10px #aaa;">
-    {% endif %}
-  </div>
-
-  <!-- Tu contenido actual aquí (queda espacio para más cosas) -->
-  <div class="mt-4">
-    <!-- ... Aquí puedes añadir más contenido si lo deseas ... -->
-  </div>
-
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height:60vh;">
+  {% if LogoURL %}
+    <img src="{{ LogoURL }}" alt="Logo grande" style="max-width:240px; max-height:240px; margin-bottom:24px; border-radius:18px; box-shadow:0 2px 10px #aaa;">
+  {% endif %}
 </div>
-
-<style>
-  :root {
-    --color-topbar: {{ config.get('ColorPrincipal', '#0d6efd') }};
-    --color-bottombar: {{ config.get('ColorFondo', '#ffffff') }};
-  }
-</style>
-
-<!-- Aquí podría ir JS adicional en el futuro si lo requieres -->
 {% endblock %}
