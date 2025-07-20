@@ -43,13 +43,9 @@
 </div>
 
 <script>
-// ====== MEJORAS (sin eliminar tu lógica original) ====== //
-// 1. Cargar configuración mejorada
+// Cargar configuración al iniciar
 document.addEventListener('DOMContentLoaded', function() {
-  // Priorizar localStorage si existe (para persistencia)
   const savedConfig = JSON.parse(localStorage.getItem('appConfig')) || {};
-  
-  // Aplicar configuración
   if (savedConfig.NombreNegocio) {
     document.getElementById('nombreNegocio').value = savedConfig.NombreNegocio;
   }
@@ -60,24 +56,18 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('colorFondo').value = savedConfig.ColorFondo;
   }
   if (savedConfig.LogoURL) {
-    // Verificar si es base64 o URL normal
-    if (savedConfig.LogoURL.startsWith('data:')) {
-      document.getElementById('logoPreview').src = savedConfig.LogoURL;
-    } else if (savedConfig.LogoURL) {
-      // Mantener tu lógica original de carga
-      document.getElementById('logoPreview').src = "{{ config.get('LogoURL', '') }}" || savedConfig.LogoURL;
-    }
+    document.getElementById('logoPreview').src = savedConfig.LogoURL;
   }
 });
 
-// 2. Vista previa del logo (optimizada)
+// Vista previa del logo
 document.getElementById('logoFile').addEventListener('change', function() {
   const file = this.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {
       document.getElementById('logoPreview').src = e.target.result;
-      // Guardar preview en localStorage inmediatamente
+      // Guardar preview en localStorage
       const currentConfig = JSON.parse(localStorage.getItem('appConfig')) || {};
       currentConfig.LogoURL = e.target.result;
       localStorage.setItem('appConfig', JSON.stringify(currentConfig));
@@ -86,7 +76,7 @@ document.getElementById('logoFile').addEventListener('change', function() {
   }
 });
 
-// 3. Guardar configuración (versión mejorada)
+// Guardar configuración
 document.getElementById('configForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const mensaje = document.getElementById('mensajeProcesando');
@@ -100,10 +90,18 @@ document.getElementById('configForm').addEventListener('submit', async function(
   };
 
   try {
-    // Guardar en localStorage (siempre primero)
+    // 1. Guardar en localStorage
     localStorage.setItem('appConfig', JSON.stringify(config));
 
-    // ==== MANTENEMOS TU LÓGICA ORIGINAL DE ENVÍO AL SERVIDOR ==== //
+    // 2. Notificar a la ventana Inicio (NUEVO)
+    if (window.opener) {
+      window.opener.postMessage({
+        type: 'configUpdated',
+        config: config
+      }, '*');
+    }
+
+    // 3. Enviar al servidor (tu lógica original)
     const logoFile = document.getElementById('logoFile').files[0];
     
     if (logoFile) {
@@ -122,7 +120,6 @@ document.getElementById('configForm').addEventListener('submit', async function(
       reader.readAsDataURL(logoFile);
     }
 
-    // Enviar otros datos (texto)
     await Promise.all([
       fetch('{{ config["URLScriptConfig"] }}', {
         method: 'POST',
@@ -151,8 +148,7 @@ document.getElementById('configForm').addEventListener('submit', async function(
 
   } catch (error) {
     console.error('Error:', error);
-    // Mensaje más descriptivo
-    alert('Configuración guardada localmente. Error al conectar con el servidor: ' + error.message);
+    alert('Configuración guardada localmente. Error en servidor: ' + error.message);
     mensaje.style.display = 'none';
   }
 });
