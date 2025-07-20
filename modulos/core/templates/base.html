@@ -75,7 +75,7 @@
   <!-- Top Navbar -->
   <nav class="navbar navbar-dark fixed-top" style="background: {{ ColorPrincipal }};">
     <div class="container-fluid d-flex align-items-center justify-content-between">
-      <a class="navbar-brand p-0 me-2" href="{{ url_for('core.inicio') }}">
+      <a class="navbar-brand p-0 me-2" href="{{ url_for('inicio') }}">
         {% if LogoURL %}
           <img src="{{ LogoURL }}" alt="Logo">
         {% endif %}
@@ -140,7 +140,7 @@
           <a class="list-group-item list-group-item-action" href="#">Balance General</a>
         </div>
 
-        <a class="list-group-item list-group-item-action" href="{{ url_for('core.configuracion') }}">
+        <a class="list-group-item list-group-item-action" href="{{ url_for('configuracion') }}">
           <i class="bi bi-gear"></i> Configuración
         </a>
         <a class="list-group-item list-group-item-action" href="#">
@@ -164,7 +164,7 @@
 
   <nav class="navbar fixed-bottom bottom-nav">
     <div class="container-fluid justify-content-around">
-      <a class="nav-link {% if request.path == url_for('core.inicio') %}active{% endif %}"
+      <a class="nav-link {% if request.path == url_for('inicio') %}active{% endif %}"
          href="{{ url_for('inicio') }}">
         <i class="bi bi-house"></i><br>Inicio
       </a>
