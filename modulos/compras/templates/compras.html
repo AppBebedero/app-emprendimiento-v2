@@ -134,7 +134,7 @@
   </div>
 </div>
 
-<!-- MODAL NUEVO PRODUCTO (básico, puedes mejorarlo igual que el de proveedor) -->
+<!-- MODAL NUEVO PRODUCTO -->
 <div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalProductoLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content rounded-4 shadow-lg">
@@ -150,7 +150,30 @@
             <label class="form-label"><i class="bi bi-box me-1"></i>Nombre</label>
             <input type="text" class="form-control" name="nombre" required>
           </div>
-          <!-- Puedes agregar más campos según tus necesidades -->
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-archive me-1"></i>Categoría</label>
+            <select class="form-select" name="categoria" required>
+              <option value="">Seleccionar...</option>
+              <option value="Producto Terminado">Producto Terminado</option>
+              <option value="Materia Prima">Materia Prima</option>
+              <option value="Suministros">Suministros</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-tags me-1"></i>Unidad</label>
+            <select class="form-select" name="unidad" required>
+              <option value="">Seleccionar...</option>
+              <option value="Unitario">Unitario</option>
+              <option value="Paquete">Paquete</option>
+              <option value="Caja">Caja</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-chat-left-text me-1"></i>Observaciones</label>
+            <textarea class="form-control" name="observaciones" rows="2"></textarea>
+          </div>
         </div>
         <div class="modal-footer d-flex justify-content-between">
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
@@ -182,16 +205,15 @@
   document.getElementById('precioUnitario').addEventListener('input', recalcular);
   document.getElementById('iva').addEventListener('change', recalcular);
 
-  // --- Gestión de proveedores y productos en memoria ---
+  // Gestión de proveedores y productos en memoria
   const selectProv = document.querySelector('select[name="Proveedor"]');
   const selectProd = document.querySelector('select[name="Producto"]');
 
-  // Guardar proveedor desde el modal completo
+  // Proveedores en memoria
   document.getElementById('formNuevoProveedor').addEventListener('submit', function(e){
     e.preventDefault();
     const nombre = this.nombre.value.trim();
     if(nombre){
-      // Verificar duplicados
       let existe = false;
       for(let i=0; i<selectProv.options.length; i++){
         if(selectProv.options[i].value.toLowerCase() === nombre.toLowerCase()){ existe = true; break;}
@@ -200,13 +222,15 @@
         let o = new Option(nombre, nombre);
         selectProv.add(o);
         selectProv.value = nombre;
+      } else {
+        selectProv.value = nombre;
       }
     }
     bootstrap.Modal.getInstance(document.getElementById('modalProveedor')).hide();
     this.reset();
   });
 
-  // Guardar producto desde el modal
+  // Productos en memoria
   document.getElementById('formNuevoProducto').addEventListener('submit', function(e){
     e.preventDefault();
     const nombre = this.nombre.value.trim();
@@ -218,6 +242,8 @@
       if(!existe){
         let o = new Option(nombre, nombre);
         selectProd.add(o);
+        selectProd.value = nombre;
+      } else {
         selectProd.value = nombre;
       }
     }
