@@ -3,7 +3,7 @@
 <div class="card mx-auto my-5" style="max-width:600px;">
   <div class="card-body">
     <h4 class="card-title text-center mb-4">Registrar Compra</h4>
-    <form method="POST" id="compraForm">
+    <form method="POST" id="compraForm" autocomplete="off">
       <div class="row g-2">
         <div class="col-6">
           <label class="form-label">Fecha</label>
@@ -66,9 +66,14 @@
         <label class="form-label">Observaciones</label>
         <textarea name="Observaciones" class="form-control" rows="2"></textarea>
       </div>
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between align-items-center">
         <a href="{{ url_for('core.inicio') }}" class="btn btn-secondary">Cancelar</a>
-        <button type="submit" class="btn btn-primary">Guardar Compra</button>
+        <button type="submit" id="btnGuardarCompra" class="btn btn-primary">
+          Guardar Compra
+        </button>
+      </div>
+      <div class="text-center mt-3" id="guardandoMsg" style="display:none;">
+        <span class="spinner-border spinner-border-sm"></span> Guardando...
       </div>
     </form>
   </div>
@@ -227,7 +232,6 @@
         selectProv.add(o);
         selectProv.value = nombre;
       }
-      // Forzar evento change
       selectProv.dispatchEvent(new Event('change'));
     }
     bootstrap.Modal.getInstance(document.getElementById('modalProveedor')).hide();
@@ -256,6 +260,16 @@
     }
     bootstrap.Modal.getInstance(document.getElementById('modalProducto')).hide();
     this.reset();
+  });
+
+  // Mostrar mensaje "Guardando..." al enviar compra
+  document.getElementById('compraForm').addEventListener('submit', function(e){
+    const btnGuardar = document.getElementById('btnGuardarCompra');
+    const guardando = document.getElementById('guardandoMsg');
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = "Guardando...";
+    guardando.style.display = "block";
+    // Si usas AJAX, aquí podrías volver a habilitar el botón cuando termine el proceso
   });
 </script>
 {% endblock %}
