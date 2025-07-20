@@ -4,11 +4,15 @@ import os
 import requests
 from config_loader import cargar_config
 
-app = Flask(__name__)
+# Ajuste modular: usar templates en modulos/core/templates
+template_dir = os.path.abspath('modulos/core/templates')
+app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'clave-secreta'
+
+# Cargar configuración al iniciar la app
 config = cargar_config()
 
-# Función para guardar en CSV
+# Función para guardar datos en CSV
 def guardar_en_csv(ruta, datos, encabezados):
     existe = os.path.exists(ruta)
     with open(ruta, mode='a', newline='', encoding='utf-8') as archivo:
@@ -35,19 +39,20 @@ def compras():
         with open('datos/proveedores.csv', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             proveedores = [row['Nombre'] for row in reader]
-    except: pass
-
+    except:
+        pass
     try:
         with open('datos/productos.csv', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             productos = [row['Nombre'] for row in reader]
-    except: pass
+    except:
+        pass
 
     if request.method == 'POST':
         datos = request.form.to_dict()
         datos['Total'] = float(datos['Cantidad']) * float(datos['PrecioUnitario'])
-
-        encabezados = ['Fecha', 'N_Documento', 'Proveedor', 'Producto', 'Cantidad', 'PrecioUnitario', 'Moneda', 'Total', 'Forma_Pago', 'Observaciones']
+        encabezados = ['Fecha', 'N_Documento', 'Proveedor', 'Producto', 'Cantidad',
+                       'PrecioUnitario', 'Moneda', 'Total', 'Forma_Pago', 'Observaciones']
         guardar_en_csv('datos/compras.csv', datos, encabezados)
 
         # Envío a Google Sheets
@@ -59,7 +64,8 @@ def compras():
         flash('Compra registrada exitosamente')
         return redirect('/compras')
 
-    return render_template('compras.html', config=config, proveedores=proveedores, productos=productos)
+    return render_template('compras.html', config=config,
+                           proveedores=proveedores, productos=productos)
 
 # -------------------------
 # RUTA: GUARDAR PROVEEDOR
@@ -68,18 +74,16 @@ def compras():
 def guardar_proveedor():
     datos = request.get_json()
     nombre = datos.get('Nombre', '').strip()
-
     if not nombre:
         return jsonify({'success': False, 'message': 'Nombre requerido'})
-
-    # Validar duplicado
     try:
         with open('datos/proveedores.csv', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 if row['Nombre'].strip().lower() == nombre.lower():
                     return jsonify({'success': False, 'message': 'Proveedor ya existe'})
-    except: pass
+    except:
+        pass
 
     proveedor = {'Nombre': nombre}
     encabezados = ['Nombre']
@@ -99,18 +103,16 @@ def guardar_proveedor():
 def guardar_producto():
     datos = request.get_json()
     nombre = datos.get('Nombre', '').strip()
-
     if not nombre:
         return jsonify({'success': False, 'message': 'Nombre requerido'})
-
-    # Validar duplicado
     try:
         with open('datos/productos.csv', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 if row['Nombre'].strip().lower() == nombre.lower():
                     return jsonify({'success': False, 'message': 'Producto ya existe'})
-    except: pass
+    except:
+        pass
 
     producto = {'Nombre': nombre}
     encabezados = ['Nombre']
@@ -124,10 +126,11 @@ def guardar_producto():
     return jsonify({'success': True})
 
 # -------------------------
-# RUTA: CONFIGURACIÓN (opcional si la usás)
+# RUTA: CONFIGURACIÓN
 # -------------------------
-@app.route('/configuracion')
+@app.route('/configuracion', methods=['GET', 'POST'])
 def configuracion():
+    # Aquí sigue tu lógica actual para GET y POST (si existe)
     return render_template('configuracion.html', config=config)
 
 # -------------------------
