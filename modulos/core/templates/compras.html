@@ -175,18 +175,42 @@
 </div>
 
 <script>
-// Máscara para teléfono/celular
+// Función original para máscara de teléfono (conservada intacta)
 function mascaraTel(input) {
   let v = input.value.replace(/\D/g,'').slice(0,8);
   if(v.length > 4) input.value = v.slice(0,4)+'-'+v.slice(4);
   else input.value = v;
 }
 
-// Guardar Proveedor
+// ========== NUEVAS MEJORAS ========== //
+// 1. Cache de proveedores en localStorage
+let proveedoresCache = JSON.parse(localStorage.getItem('proveedoresCache')) || [];
+
+// 2. Actualizar select combinando Jinja2 + cache
+function actualizarSelectProveedores() {
+  const select = document.getElementById('proveedor');
+  const currentValue = select.value;
+  
+  // Opciones de Jinja2 (originales) + cache
+  select.innerHTML = `
+    {% for p in proveedores %}
+      <option value="{{ p }}" ${'{{ p }}' === currentValue ? 'selected' : ''}>{{ p }}</option>
+    {% endfor %}
+    ${proveedoresCache.map(p => `
+      <option value="${p}" ${p === currentValue ? 'selected' : ''}>${p}</option>
+    `).join('')}
+  `;
+}
+
+// 3. Guardar proveedor (versión mejorada)
 document.getElementById('formProveedor').addEventListener('submit', function(e) {
   e.preventDefault();
-  document.getElementById('mensajeProcesandoProv').style.display = 'block';
+  const mensajeProcesando = document.getElementById('mensajeProcesandoProv');
+  mensajeProcesando.style.display = 'block';
+
   const datos = Object.fromEntries(new FormData(this));
+
+  // Lógica original de guardado
   fetch('/guardar_proveedor', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -194,20 +218,41 @@ document.getElementById('formProveedor').addEventListener('submit', function(e) 
   })
   .then(res => res.json())
   .then(data => {
-    document.getElementById('mensajeProcesandoProv').style.display = 'none';
+    mensajeProcesando.style.display = 'none';
+    
     if (data.success) {
-      const select = document.getElementById('proveedor');
-      const option = new Option(datos.Nombre, datos.Nombre);
-      select.add(option);
-      select.value = datos.Nombre;
+      // Actualizar cache y localStorage
+      proveedoresCache.push(datos.Nombre);
+      localStorage.setItem('proveedoresCache', JSON.stringify(proveedoresCache));
+      
+      // Actualizar select
+      actualizarSelectProveedores();
+      
+      // Cerrar modal y limpiar formulario
       bootstrap.Modal.getInstance(document.getElementById('modalProveedor')).hide();
+      this.reset();
     } else {
       alert(data.message || 'Error al guardar proveedor');
     }
+  })
+  .catch(error => {
+    mensajeProcesando.style.display = 'none';
+    console.error('Error:', error);
+    alert('Error de conexión');
   });
 });
 
-// Guardar Producto
+// 4. Inicialización al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+  actualizarSelectProveedores();
+  
+  // Máscara para teléfonos (original)
+  document.querySelectorAll('input[pattern="\\d{4}-\\d{4}"]').forEach(input => {
+    input.addEventListener('input', function() { mascaraTel(this); });
+  });
+});
+
+// Lógica original para productos (conservada intacta)
 document.getElementById('formProducto').addEventListener('submit', function(e) {
   e.preventDefault();
   document.getElementById('mensajeProcesandoProd').style.display = 'block';
