@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
+
+{% block title %}Inicio{% endblock %}
+{% block topbar_title %}Inicio{% endblock %}
+
 {% block content %}
-  <div class="text-center py-5">
-   {# <h1>{{ NombreNegocio }}</h1> #}
-    {% if LogoURL %}
-      <img src="{{ LogoURL }}" alt="Logo" style="max-height:150px;">
-    {% endif %}
-  </div>
+<div class="d-flex flex-column align-items-center justify-content-center" style="min-height:60vh;">
+  {% if LogoURL %}
+    <img src="{{ LogoURL }}" alt="Logo grande" style="max-width:240px; max-height:240px; margin-bottom:24px; border-radius:18px; box-shadow:0 2px 10px #aaa;">
+  {% endif %}
+  <h1 class="display-5 fw-bold text-center mb-3" style="color:{{ ColorPrincipal }};">{{ NombreNegocio }}</h1>
+</div>
 {% endblock %}
