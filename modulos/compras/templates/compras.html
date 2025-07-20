@@ -74,34 +74,93 @@
   </div>
 </div>
 
-<!-- Modal Proveedor -->
-<div class="modal fade" id="modalProveedor" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">Agregar Proveedor</h5></div>
-      <div class="modal-body">
-        <input id="newProveedor" type="text" class="form-control" placeholder="Nombre proveedor">
+<!-- MODAL NUEVO PROVEEDOR -->
+<div class="modal fade" id="modalProveedor" tabindex="-1" aria-labelledby="modalProveedorLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalProveedorLabel">
+          <i class="bi bi-person-plus-fill me-2"></i>Nuevo Proveedor
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button class="btn btn-success" id="btnAddProveedor">Agregar</button>
-      </div>
+      <form id="formNuevoProveedor">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-person-badge me-1"></i>Nombre</label>
+            <input type="text" class="form-control" name="nombre" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-telephone me-1"></i>Teléfono</label>
+            <input type="text" class="form-control" name="telefono" maxlength="9" pattern="\d{4}-\d{4}" placeholder="0000-0000">
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-envelope me-1"></i>Email</label>
+            <input type="email" class="form-control" name="email">
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-person me-1"></i>Contacto</label>
+            <input type="text" class="form-control" name="contacto">
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-phone me-1"></i>Celular</label>
+            <input type="text" class="form-control" name="celular" maxlength="9" pattern="\d{4}-\d{4}" placeholder="0000-0000">
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-briefcase me-1"></i>Tipo de Negocio</label>
+            <select class="form-select" name="tipo_negocio" required>
+              <option value="">Seleccionar...</option>
+              <option value="Suministros">Suministros</option>
+              <option value="Oficina">Oficina</option>
+              <option value="Librería">Librería</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-chat-left-text me-1"></i>Observaciones</label>
+            <textarea class="form-control" name="observaciones" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i>Cancelar
+          </button>
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle me-1"></i>Guardar
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
 
-<!-- Modal Producto -->
-<div class="modal fade" id="modalProducto" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">Agregar Producto</h5></div>
-      <div class="modal-body">
-        <input id="newProducto" type="text" class="form-control" placeholder="Nombre producto">
+<!-- MODAL NUEVO PRODUCTO (básico, puedes mejorarlo igual que el de proveedor) -->
+<div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalProductoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow-lg">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="modalProductoLabel">
+          <i class="bi bi-box-seam me-2"></i>Nuevo Producto
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button class="btn btn-success" id="btnAddProducto">Agregar</button>
-      </div>
+      <form id="formNuevoProducto">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-box me-1"></i>Nombre</label>
+            <input type="text" class="form-control" name="nombre" required>
+          </div>
+          <!-- Puedes agregar más campos según tus necesidades -->
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i>Cancelar
+          </button>
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle me-1"></i>Guardar
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -123,19 +182,48 @@
   document.getElementById('precioUnitario').addEventListener('input', recalcular);
   document.getElementById('iva').addEventListener('change', recalcular);
 
-  // Gestión en memoria de proveedores/productos
+  // --- Gestión de proveedores y productos en memoria ---
   const selectProv = document.querySelector('select[name="Proveedor"]');
   const selectProd = document.querySelector('select[name="Producto"]');
 
-  document.getElementById('btnAddProveedor').addEventListener('click', ()=>{
-    const name = document.getElementById('newProveedor').value.trim();
-    if(name){ let o=new Option(name,name); selectProv.add(o); selectProv.value=name;}
+  // Guardar proveedor desde el modal completo
+  document.getElementById('formNuevoProveedor').addEventListener('submit', function(e){
+    e.preventDefault();
+    const nombre = this.nombre.value.trim();
+    if(nombre){
+      // Verificar duplicados
+      let existe = false;
+      for(let i=0; i<selectProv.options.length; i++){
+        if(selectProv.options[i].value.toLowerCase() === nombre.toLowerCase()){ existe = true; break;}
+      }
+      if(!existe){
+        let o = new Option(nombre, nombre);
+        selectProv.add(o);
+        selectProv.value = nombre;
+      }
+    }
     bootstrap.Modal.getInstance(document.getElementById('modalProveedor')).hide();
+    this.reset();
   });
-  document.getElementById('btnAddProducto').addEventListener('click', ()=>{
-    const name = document.getElementById('newProducto').value.trim();
-    if(name){ let o=new Option(name,name); selectProd.add(o); selectProd.value=name;}
+
+  // Guardar producto desde el modal
+  document.getElementById('formNuevoProducto').addEventListener('submit', function(e){
+    e.preventDefault();
+    const nombre = this.nombre.value.trim();
+    if(nombre){
+      let existe = false;
+      for(let i=0; i<selectProd.options.length; i++){
+        if(selectProd.options[i].value.toLowerCase() === nombre.toLowerCase()){ existe = true; break;}
+      }
+      if(!existe){
+        let o = new Option(nombre, nombre);
+        selectProd.add(o);
+        selectProd.value = nombre;
+      }
+    }
     bootstrap.Modal.getInstance(document.getElementById('modalProducto')).hide();
+    this.reset();
   });
+
 </script>
 {% endblock %}
