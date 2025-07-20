@@ -30,6 +30,10 @@
         <input type="color" class="form-control form-control-color" id="colorFondo" name="ColorFondo" value="{{ config.get('ColorFondo', '#ffffff') }}">
       </div>
 
+      <div id="mensajeProcesando" class="text-center fw-bold" style="color:red; font-size:2rem; display:none;">
+        PROCESANDO...
+      </div>
+
       <div class="d-flex justify-content-between">
         <a href="/" class="btn btn-danger"><i class="bi bi-x-circle"></i> Cancelar</a>
         <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar cambios</button>
@@ -49,8 +53,9 @@ document.getElementById('logoFile').addEventListener('change', function () {
 
 document.getElementById('configForm').addEventListener('submit', async function (e) {
   e.preventDefault();
-  const form = e.target;
+  document.getElementById('mensajeProcesando').style.display = 'block';
 
+  const form = e.target;
   const nombreNegocio = form.NombreNegocio.value;
   const colorPrincipal = form.ColorPrincipal.value;
   const colorFondo = form.ColorFondo.value;
@@ -68,7 +73,6 @@ document.getElementById('configForm').addEventListener('submit', async function 
       const reader = new FileReader();
       reader.onloadend = async function () {
         const base64Logo = reader.result.split(',')[1];
-
         await fetch('{{ config["URLScriptConfig"] }}', {
           method: 'POST',
           body: JSON.stringify({
@@ -92,12 +96,12 @@ document.getElementById('configForm').addEventListener('submit', async function 
       });
     }
 
-    // Refrescar la página principal para ver los cambios al volver
-    setTimeout(() => { window.location.href = '/'; }, 600);
+    setTimeout(() => { window.location.href = '/'; }, 1200);
 
   } catch (error) {
     console.error('Error al guardar configuración:', error);
     alert('Ocurrió un error al guardar los datos');
+    document.getElementById('mensajeProcesando').style.display = 'none';
   }
 });
 </script>
