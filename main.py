@@ -9,7 +9,6 @@ template_dir = os.path.abspath('modulos/core/templates')
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'clave-secreta'
 
-# Función para guardar datos en CSV
 def guardar_en_csv(ruta, datos, encabezados):
     existe = os.path.exists(ruta)
     with open(ruta, mode='a', newline='', encoding='utf-8') as archivo:
@@ -18,9 +17,6 @@ def guardar_en_csv(ruta, datos, encabezados):
             writer.writeheader()
         writer.writerow(datos)
 
-# -------------------------
-# INICIO
-# -------------------------
 @app.route('/')
 def inicio():
     config = cargar_config()
@@ -33,9 +29,6 @@ def inicio():
         config=config
     )
 
-# -------------------------
-# COMPRAS
-# -------------------------
 @app.route('/compras', methods=['GET', 'POST'])
 def compras():
     config = cargar_config()
@@ -60,13 +53,10 @@ def compras():
         encabezados = ['Fecha', 'N_Documento', 'Proveedor', 'Producto', 'Cantidad',
                        'PrecioUnitario', 'Moneda', 'Total', 'Forma_Pago', 'Observaciones']
         guardar_en_csv('datos/compras.csv', datos, encabezados)
-
-        # Envío a Google Sheets
         try:
             requests.post(config['URLScript'], json=datos)
         except Exception as e:
             print("Error enviando a Google Sheets:", e)
-
         flash('Compra registrada exitosamente')
         return redirect('/compras')
 
@@ -81,9 +71,6 @@ def compras():
         productos=productos
     )
 
-# -------------------------
-# GUARDAR PROVEEDOR
-# -------------------------
 @app.route('/guardar_proveedor', methods=['POST'])
 def guardar_proveedor():
     config = cargar_config()
@@ -111,17 +98,12 @@ def guardar_proveedor():
     }
     encabezados = ['Nombre', 'Telefono', 'Email', 'Contacto', 'Celular', 'TipoNegocio', 'Observaciones']
     guardar_en_csv('datos/proveedores.csv', proveedor, encabezados)
-
     try:
         requests.post(config['URLScriptProveedores'], json=proveedor)
     except Exception as e:
         print("Error enviando proveedor a Google Sheets:", e)
-
     return jsonify({'success': True})
 
-# -------------------------
-# GUARDAR PRODUCTO
-# -------------------------
 @app.route('/guardar_producto', methods=['POST'])
 def guardar_producto():
     config = cargar_config()
@@ -146,17 +128,12 @@ def guardar_producto():
     }
     encabezados = ['Nombre', 'Categoria', 'Unidad', 'Observaciones']
     guardar_en_csv('datos/productos.csv', producto, encabezados)
-
     try:
         requests.post(config['URLScriptProductos'], json=producto)
     except Exception as e:
         print("Error enviando producto a Google Sheets:", e)
-
     return jsonify({'success': True})
 
-# -------------------------
-# CONFIGURACIÓN
-# -------------------------
 @app.route('/configuracion', methods=['GET', 'POST'])
 def configuracion():
     config = cargar_config()
@@ -169,8 +146,5 @@ def configuracion():
         config=config
     )
 
-# -------------------------
-# MAIN
-# -------------------------
 if __name__ == '__main__':
     app.run(debug=True)
