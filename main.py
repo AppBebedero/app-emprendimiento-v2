@@ -4,7 +4,7 @@ import os
 import requests
 from config_loader import cargar_config
 
-# Ajuste modular: usar templates en modulos/core/templates
+# Modular: usar templates en modulos/core/templates
 template_dir = os.path.abspath('modulos/core/templates')
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'clave-secreta'
@@ -19,7 +19,7 @@ def guardar_en_csv(ruta, datos, encabezados):
         writer.writerow(datos)
 
 # -------------------------
-# RUTA: INICIO
+# INICIO
 # -------------------------
 @app.route('/')
 def inicio():
@@ -34,7 +34,7 @@ def inicio():
     )
 
 # -------------------------
-# RUTA: COMPRAS
+# COMPRAS
 # -------------------------
 @app.route('/compras', methods=['GET', 'POST'])
 def compras():
@@ -82,7 +82,7 @@ def compras():
     )
 
 # -------------------------
-# RUTA: GUARDAR PROVEEDOR
+# GUARDAR PROVEEDOR
 # -------------------------
 @app.route('/guardar_proveedor', methods=['POST'])
 def guardar_proveedor():
@@ -100,8 +100,16 @@ def guardar_proveedor():
     except:
         pass
 
-    proveedor = {'Nombre': nombre}
-    encabezados = ['Nombre']
+    proveedor = {
+        'Nombre': nombre,
+        'Telefono': datos.get('Telefono', ''),
+        'Email': datos.get('Email', ''),
+        'Contacto': datos.get('Contacto', ''),
+        'Celular': datos.get('Celular', ''),
+        'TipoNegocio': datos.get('TipoNegocio', ''),
+        'Observaciones': datos.get('Observaciones', '')
+    }
+    encabezados = ['Nombre', 'Telefono', 'Email', 'Contacto', 'Celular', 'TipoNegocio', 'Observaciones']
     guardar_en_csv('datos/proveedores.csv', proveedor, encabezados)
 
     try:
@@ -112,7 +120,7 @@ def guardar_proveedor():
     return jsonify({'success': True})
 
 # -------------------------
-# RUTA: GUARDAR PRODUCTO
+# GUARDAR PRODUCTO
 # -------------------------
 @app.route('/guardar_producto', methods=['POST'])
 def guardar_producto():
@@ -130,8 +138,13 @@ def guardar_producto():
     except:
         pass
 
-    producto = {'Nombre': nombre}
-    encabezados = ['Nombre']
+    producto = {
+        'Nombre': nombre,
+        'Categoria': datos.get('Categoria', ''),
+        'Unidad': datos.get('Unidad', ''),
+        'Observaciones': datos.get('Observaciones', '')
+    }
+    encabezados = ['Nombre', 'Categoria', 'Unidad', 'Observaciones']
     guardar_en_csv('datos/productos.csv', producto, encabezados)
 
     try:
@@ -142,12 +155,11 @@ def guardar_producto():
     return jsonify({'success': True})
 
 # -------------------------
-# RUTA: CONFIGURACIÓN
+# CONFIGURACIÓN
 # -------------------------
 @app.route('/configuracion', methods=['GET', 'POST'])
 def configuracion():
     config = cargar_config()
-    # Aquí sigue tu lógica actual para GET y POST (si existe)
     return render_template(
         'configuracion.html',
         NombreNegocio=config.get('NombreNegocio', 'Mi Empresa'),
