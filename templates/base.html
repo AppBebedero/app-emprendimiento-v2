@@ -22,7 +22,7 @@
       font-weight: bold;
     }
     .offcanvas-start {
-      width: 120px;     /* más estrecho */
+      width: 190px;     /* Un poco más ancho para textos largos */
     }
     .offcanvas-body {
       background: #40E0D0;  /* turquesa */
@@ -37,6 +37,19 @@
     }
     .bottom-nav .nav-link.active {
       color: yellow;
+    }
+    /* Ajusta tamaño de iconos y alineación */
+    .list-group-item i {
+      font-size: 1.3rem;
+      vertical-align: middle;
+    }
+    .list-group-item {
+      border: none;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    .collapse .list-group-item {
+      padding-left: 2rem;
     }
   </style>
 </head>
@@ -69,37 +82,48 @@
     </div>
     <div class="offcanvas-body p-0">
       <div class="list-group list-group-flush small">
-        <!-- Compras -->
-        <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuCompras">
-          <i class="bi bi-cart"></i><br>Compras
+
+        <!-- Compras con submenú -->
+        <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuCompras" aria-expanded="false" aria-controls="menuCompras">
+          <i class="bi bi-cart"></i> Compras
         </a>
-        <div class="collapse ps-2" id="menuCompras">
+        <div class="collapse" id="menuCompras">
           <a class="list-group-item list-group-item-action" href="{{ url_for('compras.compras') }}">Registrar Compra</a>
-          <a class="list-group-item list-group-item-action" href="#">Proveedores</a>
-          <a class="list-group-item list-group-item-action" href="#">Productos</a>
+          <a class="list-group-item list-group-item-action" href="{{ url_for('compras.proveedores') }}">Proveedores</a>
+          <a class="list-group-item list-group-item-action" href="{{ url_for('compras.productos') }}">Productos</a>
         </div>
-        <!-- Ventas -->
-        <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuVentas">
-          <i class="bi bi-currency-dollar"></i><br>Ventas
+
+        <!-- Ventas con submenú -->
+        <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#menuVentas" aria-expanded="false" aria-controls="menuVentas">
+          <i class="bi bi-currency-dollar"></i> Ventas
         </a>
-        <div class="collapse ps-2" id="menuVentas">
+        <div class="collapse" id="menuVentas">
           <a class="list-group-item list-group-item-action" href="#">Registrar Venta</a>
+          <!-- Puedes agregar más opciones aquí -->
         </div>
-        <!-- Finanzas -->
+
+        <!-- Finanzas (sin submenú) -->
         <a class="list-group-item list-group-item-action" href="#">
-          <i class="bi bi-bar-chart"></i><br>Finanzas
+          <i class="bi bi-bar-chart"></i> Finanzas
         </a>
-        <!-- Reportes -->
+
+        <!-- Reportes (sin submenú) -->
         <a class="list-group-item list-group-item-action" href="#">
-          <i class="bi bi-file-earmark-text"></i><br>Reportes
+          <i class="bi bi-file-earmark-text"></i> Reportes
         </a>
+
+        <!-- Configuración -->
+        <a class="list-group-item list-group-item-action" href="{{ url_for('core.configuracion') }}">
+          <i class="bi bi-gear"></i> Configuración
+        </a>
+
         <!-- Acerca de -->
-        <a class="list-group-item list-group-item-action" href="#">
-          <i class="bi bi-info-circle"></i><br>Acerca de
+        <a class="list-group-item list-group-item-action" href="{{ url_for('core.acerca') }}">
+          <i class="bi bi-info-circle"></i> Acerca de
         </a>
         <!-- Manual de usuario -->
-        <a class="list-group-item list-group-item-action" href="#">
-          <i class="bi bi-book"></i><br>Manual Usuario
+        <a class="list-group-item list-group-item-action" href="{{ url_for('core.manual_usuario') }}">
+          <i class="bi bi-book"></i> Manual Usuario
         </a>
       </div>
     </div>
