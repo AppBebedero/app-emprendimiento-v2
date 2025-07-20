@@ -43,9 +43,13 @@
 </div>
 
 <script>
-// Cargar configuración al iniciar (si existe en localStorage)
+// ====== MEJORAS (sin eliminar tu lógica original) ====== //
+// 1. Cargar configuración mejorada
 document.addEventListener('DOMContentLoaded', function() {
+  // Priorizar localStorage si existe (para persistencia)
   const savedConfig = JSON.parse(localStorage.getItem('appConfig')) || {};
+  
+  // Aplicar configuración
   if (savedConfig.NombreNegocio) {
     document.getElementById('nombreNegocio').value = savedConfig.NombreNegocio;
   }
@@ -56,37 +60,50 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('colorFondo').value = savedConfig.ColorFondo;
   }
   if (savedConfig.LogoURL) {
-    document.getElementById('logoPreview').src = savedConfig.LogoURL;
+    // Verificar si es base64 o URL normal
+    if (savedConfig.LogoURL.startsWith('data:')) {
+      document.getElementById('logoPreview').src = savedConfig.LogoURL;
+    } else if (savedConfig.LogoURL) {
+      // Mantener tu lógica original de carga
+      document.getElementById('logoPreview').src = "{{ config.get('LogoURL', '') }}" || savedConfig.LogoURL;
+    }
   }
 });
 
-// Vista previa del logo
+// 2. Vista previa del logo (optimizada)
 document.getElementById('logoFile').addEventListener('change', function() {
-  const preview = document.getElementById('logoPreview');
   const file = this.files[0];
   if (file) {
-    preview.src = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('logoPreview').src = e.target.result;
+      // Guardar preview en localStorage inmediatamente
+      const currentConfig = JSON.parse(localStorage.getItem('appConfig')) || {};
+      currentConfig.LogoURL = e.target.result;
+      localStorage.setItem('appConfig', JSON.stringify(currentConfig));
+    };
+    reader.readAsDataURL(file);
   }
 });
 
-// Guardar configuración
+// 3. Guardar configuración (versión mejorada)
 document.getElementById('configForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  document.getElementById('mensajeProcesando').style.display = 'block';
+  const mensaje = document.getElementById('mensajeProcesando');
+  mensaje.style.display = 'block';
 
-  const form = e.target;
   const config = {
-    NombreNegocio: form.NombreNegocio.value,
-    ColorPrincipal: form.ColorPrincipal.value,
-    ColorFondo: form.ColorFondo.value,
+    NombreNegocio: this.NombreNegocio.value,
+    ColorPrincipal: this.ColorPrincipal.value,
+    ColorFondo: this.ColorFondo.value,
     LogoURL: document.getElementById('logoPreview').src
   };
 
   try {
-    // Guardar en localStorage (persistencia inmediata)
+    // Guardar en localStorage (siempre primero)
     localStorage.setItem('appConfig', JSON.stringify(config));
 
-    // Guardar en el servidor (manteniendo tu lógica actual)
+    // ==== MANTENEMOS TU LÓGICA ORIGINAL DE ENVÍO AL SERVIDOR ==== //
     const logoFile = document.getElementById('logoFile').files[0];
     
     if (logoFile) {
@@ -105,37 +122,38 @@ document.getElementById('configForm').addEventListener('submit', async function(
       reader.readAsDataURL(logoFile);
     }
 
-    // Enviar otros datos al servidor
-    await fetch('{{ config["URLScriptConfig"] }}', {
-      method: 'POST',
-      body: JSON.stringify({
-        clave: 'NombreNegocio',
-        valor: config.NombreNegocio
+    // Enviar otros datos (texto)
+    await Promise.all([
+      fetch('{{ config["URLScriptConfig"] }}', {
+        method: 'POST',
+        body: JSON.stringify({
+          clave: 'NombreNegocio',
+          valor: config.NombreNegocio
+        })
+      }),
+      fetch('{{ config["URLScriptConfig"] }}', {
+        method: 'POST',
+        body: JSON.stringify({
+          clave: 'ColorPrincipal',
+          valor: config.ColorPrincipal
+        })
+      }),
+      fetch('{{ config["URLScriptConfig"] }}', {
+        method: 'POST',
+        body: JSON.stringify({
+          clave: 'ColorFondo',
+          valor: config.ColorFondo
+        })
       })
-    });
-
-    await fetch('{{ config["URLScriptConfig"] }}', {
-      method: 'POST',
-      body: JSON.stringify({
-        clave: 'ColorPrincipal',
-        valor: config.ColorPrincipal
-      })
-    });
-
-    await fetch('{{ config["URLScriptConfig"] }}', {
-      method: 'POST',
-      body: JSON.stringify({
-        clave: 'ColorFondo',
-        valor: config.ColorFondo
-      })
-    });
+    ]);
 
     setTimeout(() => { window.location.href = '/'; }, 1200);
 
   } catch (error) {
     console.error('Error:', error);
-    alert('Error al guardar. Los cambios se mantendrán localmente hasta la próxima sesión.');
-    document.getElementById('mensajeProcesando').style.display = 'none';
+    // Mensaje más descriptivo
+    alert('Configuración guardada localmente. Error al conectar con el servidor: ' + error.message);
+    mensaje.style.display = 'none';
   }
 });
 </script>
