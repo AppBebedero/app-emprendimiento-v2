@@ -216,15 +216,19 @@
     if(nombre){
       let existe = false;
       for(let i=0; i<selectProv.options.length; i++){
-        if(selectProv.options[i].value.toLowerCase() === nombre.toLowerCase()){ existe = true; break;}
+        if(selectProv.options[i].value.toLowerCase() === nombre.toLowerCase()){
+          existe = true;
+          selectProv.selectedIndex = i;
+          break;
+        }
       }
       if(!existe){
         let o = new Option(nombre, nombre);
         selectProv.add(o);
         selectProv.value = nombre;
-      } else {
-        selectProv.value = nombre;
       }
+      // Forzar evento change
+      selectProv.dispatchEvent(new Event('change'));
     }
     bootstrap.Modal.getInstance(document.getElementById('modalProveedor')).hide();
     this.reset();
@@ -237,19 +241,21 @@
     if(nombre){
       let existe = false;
       for(let i=0; i<selectProd.options.length; i++){
-        if(selectProd.options[i].value.toLowerCase() === nombre.toLowerCase()){ existe = true; break;}
+        if(selectProd.options[i].value.toLowerCase() === nombre.toLowerCase()){
+          existe = true;
+          selectProd.selectedIndex = i;
+          break;
+        }
       }
       if(!existe){
         let o = new Option(nombre, nombre);
         selectProd.add(o);
         selectProd.value = nombre;
-      } else {
-        selectProd.value = nombre;
       }
+      selectProd.dispatchEvent(new Event('change'));
     }
     bootstrap.Modal.getInstance(document.getElementById('modalProducto')).hide();
     this.reset();
   });
-
 </script>
 {% endblock %}
