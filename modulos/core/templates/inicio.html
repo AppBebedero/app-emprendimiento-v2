@@ -1,20 +1,23 @@
 {% extends 'base.html' %}
 
 {% block title %}Inicio{% endblock %}
-{% block topbar_title %}{{ config.get('NombreNegocio', 'Mi Emprendimiento') }}{% endblock %}
+{% block topbar_title %}Inicio{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-  <!-- Ejemplo: Barra superior con logo y nombre -->
-  <header class="d-flex align-items-center py-3" style="background: var(--color-topbar, #0d6efd);">
-    <img id="logo-inicio" src="{{ config.get('LogoURL', '') }}" alt="Logo" width="40" class="me-3">
-    <h1 class="nombre-negocio m-0 text-white">{{ config.get('NombreNegocio', 'Mi Emprendimiento') }}</h1>
-  </header>
 
-  <!-- Tu contenido actual aquí -->
-  <div class="mt-4">
-    <!-- ... -->
+  <!-- Logo grande centrado SOLO si quieres -->
+  <div class="d-flex flex-column align-items-center justify-content-center" style="min-height:40vh;">
+    {% if LogoURL %}
+      <img src="{{ LogoURL }}" alt="Logo grande" style="max-width:240px; max-height:240px; margin-bottom:24px; border-radius:18px; box-shadow:0 2px 10px #aaa;">
+    {% endif %}
   </div>
+
+  <!-- Tu contenido actual aquí (queda espacio para más cosas) -->
+  <div class="mt-4">
+    <!-- ... Aquí puedes añadir más contenido si lo deseas ... -->
+  </div>
+
 </div>
 
 <style>
@@ -24,37 +27,5 @@
   }
 </style>
 
-<script>
-// Escuchar cambios desde Configuración
-window.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'configUpdated') {
-    updateUI(event.data.config);
-  }
-});
-
-// Cargar configuración al iniciar
-document.addEventListener('DOMContentLoaded', () => {
-  const savedConfig = JSON.parse(localStorage.getItem('appConfig')) || {};
-  if (Object.keys(savedConfig).length > 0) {
-    updateUI(savedConfig);
-  }
-});
-
-// Actualizar interfaz
-function updateUI(config) {
-  // Actualizar nombre
-  const nombreElement = document.querySelector('.nombre-negocio');
-  if (nombreElement) nombreElement.textContent = config.NombreNegocio || 'Mi Emprendimiento';
-  
-  // Actualizar colores
-  document.documentElement.style.setProperty('--color-topbar', config.ColorPrincipal || '#0d6efd');
-  document.documentElement.style.setProperty('--color-bottombar', config.ColorFondo || '#ffffff');
-  
-  // Actualizar logo
-  const logoElement = document.getElementById('logo-inicio');
-  if (logoElement && config.LogoURL) {
-    logoElement.src = config.LogoURL;
-  }
-}
-</script>
+<!-- Aquí podría ir JS adicional en el futuro si lo requieres -->
 {% endblock %}
