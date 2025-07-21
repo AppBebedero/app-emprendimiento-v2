@@ -43,114 +43,71 @@
 </div>
 
 <script>
-// Cargar configuración al iniciar
-document.addEventListener('DOMContentLoaded', function() {
-  const savedConfig = JSON.parse(localStorage.getItem('appConfig')) || {};
-  if (savedConfig.NombreNegocio) {
-    document.getElementById('nombreNegocio').value = savedConfig.NombreNegocio;
-  }
-  if (savedConfig.ColorPrincipal) {
-    document.getElementById('colorPrincipal').value = savedConfig.ColorPrincipal;
-  }
-  if (savedConfig.ColorFondo) {
-    document.getElementById('colorFondo').value = savedConfig.ColorFondo;
-  }
-  if (savedConfig.LogoURL) {
-    document.getElementById('logoPreview').src = savedConfig.LogoURL;
-  }
-});
-
-// Vista previa del logo
-document.getElementById('logoFile').addEventListener('change', function() {
+document.getElementById('logoFile').addEventListener('change', function () {
   const file = this.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {
       document.getElementById('logoPreview').src = e.target.result;
-      // Guardar preview en localStorage
-      const currentConfig = JSON.parse(localStorage.getItem('appConfig')) || {};
-      currentConfig.LogoURL = e.target.result;
-      localStorage.setItem('appConfig', JSON.stringify(currentConfig));
     };
     reader.readAsDataURL(file);
   }
 });
 
-// Guardar configuración
 document.getElementById('configForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const mensaje = document.getElementById('mensajeProcesando');
   mensaje.style.display = 'block';
 
-  const config = {
-    NombreNegocio: this.NombreNegocio.value,
-    ColorPrincipal: this.ColorPrincipal.value,
-    ColorFondo: this.ColorFondo.value,
-    LogoURL: document.getElementById('logoPreview').src
-  };
+  const nombreNegocio = this.NombreNegocio.value;
+  const colorPrincipal = this.ColorPrincipal.value;
+  const colorFondo = this.ColorFondo.value;
+  const logoFile = document.getElementById('logoFile').files[0];
 
-  try {
-    // 1. Guardar en localStorage
-    localStorage.setItem('appConfig', JSON.stringify(config));
-
-    // 2. Notificar a la ventana Inicio (NUEVO)
-    if (window.opener) {
-      window.opener.postMessage({
-        type: 'configUpdated',
-        config: config
-      }, '*');
-    }
-
-    // 3. Enviar al servidor (tu lógica original)
-    const logoFile = document.getElementById('logoFile').files[0];
-    
-    if (logoFile) {
-      const reader = new FileReader();
-      reader.onloadend = async function() {
-        const base64Logo = reader.result.split(',')[1];
-        await fetch('{{ config["URLScriptConfig"] }}', {
-          method: 'POST',
-          body: JSON.stringify({
-            clave: 'LogoURL',
-            valor: base64Logo,
-            tipo: 'imagen'
-          })
-        });
-      };
-      reader.readAsDataURL(logoFile);
-    }
-
-    await Promise.all([
-      fetch('{{ config["URLScriptConfig"] }}', {
+  // Primero, guarda el LOGO si hay archivo seleccionado
+  if (logoFile) {
+    const reader = new FileReader();
+    reader.onloadend = async function() {
+      // El Apps Script espera parámetro 'imagen' (NO dentro de un JSON)
+      const base64Logo = reader.result.split(',')[1];
+      const formData = new FormData();
+      formData.append('imagen', base64Logo);
+      formData.append('nombre', logoFile.name);
+      // El endpoint detectará que es imagen
+      await fetch('{{ config["URLScriptConfig"] }}', {
         method: 'POST',
-        body: JSON.stringify({
-          clave: 'NombreNegocio',
-          valor: config.NombreNegocio
-        })
-      }),
-      fetch('{{ config["URLScriptConfig"] }}', {
-        method: 'POST',
-        body: JSON.stringify({
-          clave: 'ColorPrincipal',
-          valor: config.ColorPrincipal
-        })
-      }),
-      fetch('{{ config["URLScriptConfig"] }}', {
-        method: 'POST',
-        body: JSON.stringify({
-          clave: 'ColorFondo',
-          valor: config.ColorFondo
-        })
-      })
-    ]);
-
-    setTimeout(() => { window.location.href = '/'; }, 1200);
-
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Configuración guardada localmente. Error en servidor: ' + error.message);
-    mensaje.style.display = 'none';
+        body: formData
+      });
+    };
+    reader.readAsDataURL(logoFile);
+    // Espera que termine antes de seguir
+    await new Promise(r => setTimeout(r, 800));
   }
+
+  // Luego, actualiza los otros campos
+  await fetch('{{ config["URLScriptConfig"] }}', {
+    method: 'POST',
+    body: JSON.stringify({
+      clave: 'NombreNegocio',
+      valor: nombreNegocio
+    })
+  });
+  await fetch('{{ config["URLScriptConfig"] }}', {
+    method: 'POST',
+    body: JSON.stringify({
+      clave: 'ColorPrincipal',
+      valor: colorPrincipal
+    })
+  });
+  await fetch('{{ config["URLScriptConfig"] }}', {
+    method: 'POST',
+    body: JSON.stringify({
+      clave: 'ColorFondo',
+      valor: colorFondo
+    })
+  });
+
+  setTimeout(() => { window.location.href = '/'; }, 1000);
 });
 </script>
 {% endblock %}
